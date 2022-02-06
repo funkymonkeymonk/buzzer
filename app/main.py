@@ -13,20 +13,21 @@ class Relay:
         if self.isTest:
             return
         import automationhat
+        self.relayOne = automationhat.relay.one
         time.sleep(0.1) # Short pause after ads1015 class creation recommended
 
     def on(self):
         print ("Relay on")
         if self.isTest:
             return
-        automationhat.relay.one.on()
+        self.relayOne.on()
 
 
     def off(self):
         print("Relay off")
         if self.isTest:
             return
-        automationhat.relay.one.off()
+        self.relayOne.off()
 
 app = FastAPI()
 relay = Relay(isTest)
