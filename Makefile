@@ -13,7 +13,24 @@ list:
 # required for list
 no_op__:
 
-dev:
-	uvicorn buzzer:app --reload --host 0.0.0.0
+build: buildx
+
+buildx:
+	docker buildx build --platform linux/arm/v7,linux/arm64/v8 -t buildingbananas/buzzer:latest .
+
+build-local:
+	docker build -t buildingbananas/buzzer:dev .
+
+push:
+	docker buildx build --platform linux/arm/v7,linux/arm64/v8 -t buildingbananas/buzzer:latest --push .
+
 run:
-	uvicorn buzzer:app --host 0.0.0.0
+	docker run --privileged -d --name buzzer -p 80:80 buildingbananas/buzzer:latest
+
+dev: build-local
+	docker run -it --rm -v $(HOME):/root -v $(PWD):/usr/src/app --env PYTHON_ENV="test" --name buzzer-dev -p 8000:80 buildingbananas/buzzer:dev
+
+dev-shell: build-local
+	@echo "uvicorn app.main:app --reload --host 0.0.0.0 --port 80"
+	docker run -it --rm -v $(HOME):/root -v $(PWD):/code/ --env PYTHON_ENV="test" --name buzzer-dev -p 8000:80 buildingbananas/buzzer:dev /bin/bash
+
