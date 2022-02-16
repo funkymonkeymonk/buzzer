@@ -13,24 +13,17 @@ list:
 # required for list
 no_op__:
 
-build: buildx
+clean:
+	rm -rf build
 
-buildx:
-	docker buildx build --platform linux/arm/v7,linux/arm64/v8 -t buildingbananas/buzzer:latest .
+build: clean
+	faas-cli build -f buzzer.yml
 
-build-local:
-	docker build -t buildingbananas/buzzer:dev .
+publish:
+	faas-cli publish -f ./buzzer.yml --platforms linux/arm,linux/arm64
 
-push:
-	docker buildx build --platform linux/arm/v7,linux/arm64/v8 -t buildingbananas/buzzer:latest --push .
+deploy:
+	faas-cli deploy -f ./buzzer.yml --gateway http://192.168.1.23:8080
 
-run:
-	docker run --privileged -d --name buzzer -p 80:80 buildingbananas/buzzer:latest
-
-dev: build-local
-	docker run -it --rm -v $(HOME):/root -v $(PWD):/usr/src/app --env PYTHON_ENV="test" --name buzzer-dev -p 8000:80 buildingbananas/buzzer:dev
-
-dev-shell: build-local
-	@echo "uvicorn app.main:app --reload --host 0.0.0.0 --port 80"
-	docker run -it --rm -v $(HOME):/root -v $(PWD):/code/ --env PYTHON_ENV="test" --name buzzer-dev -p 8000:80 buildingbananas/buzzer:dev /bin/bash
-
+logs:
+	faas-cli logs -f ./buzzer.yml --gateway http://192.168.1.23:8080 buzzer

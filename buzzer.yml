@@ -1,0 +1,12 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: http://127.0.0.1:8080
+functions:
+  buzzer:
+    lang: python3-flask
+    handler: ./app
+    image: buildingbananas/buzzer:latest
+    build_args:
+      ADDITIONAL_PACKAGE: py3-smbus python3-dev libffi-dev openssl-dev build-base musl
+      TEST_ENABLED: false
