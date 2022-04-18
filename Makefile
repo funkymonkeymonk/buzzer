@@ -22,7 +22,7 @@ build-local:
 	docker build -t buildingbananas/buzzer:dev .
 
 push:
-	docker buildx build --platform linux/arm/v7,linux/arm64/v8 -t buildingbananas/buzzer:latest --push .
+	docker buildx build --platform linux/arm,linux/arm64 -t buildingbananas/buzzer:latest --push .
 
 run:
 	docker run --privileged -d --name buzzer -p 80:80 buildingbananas/buzzer:latest
