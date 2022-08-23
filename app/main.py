@@ -40,3 +40,7 @@ def read_root():
     time.sleep(5)
     relay.off()
     return {}
+
+@app.get("/health")
+def read_root():
+    return {"healthy"}
