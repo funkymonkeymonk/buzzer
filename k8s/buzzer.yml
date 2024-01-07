@@ -1,0 +1,57 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: buzzer
+  name: buzzer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: buzzer
+  template:
+    metadata:
+      labels:
+        app: buzzer
+    spec:
+      containers:
+      - image: buildingbananas/buzzer:latest
+        imagePullPolicy: Always
+        name: buzzer
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: buzzer
+  name: buzzer-svc
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: buzzer
+  type: ClusterIP
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  labels:
+    app: buzzer
+  name: buzzer-http
+
+spec:
+  rules:
+  - host: example.net
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: buzzer-svc
+            port:
+              number: 8080
