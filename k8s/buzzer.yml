@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -18,6 +18,8 @@ spec:
       - image: buildingbananas/buzzer:latest
         imagePullPolicy: Always
         name: buzzer
+        securityContext:
+          privileged: true
 
 ---
 apiVersion: v1
@@ -45,8 +47,7 @@ metadata:
 
 spec:
   rules:
-  - host: example.net
-    http:
+  - http:
       paths:
       - path: /
         pathType: Prefix
